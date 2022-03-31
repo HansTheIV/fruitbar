@@ -1,6 +1,7 @@
 import win32gui
 import win32api
 import os
+import spotify_exceptions as se
 
 ###Virtual-KeyCodes###
 Media_Next = 0xB0
@@ -11,69 +12,48 @@ Media_Mute = 0xAD
 
 
 ###SpotifyInfo###
-def getwindow(Title="SpotifyMainWindow"):
-	window_id = win32gui.FindWindow(Title, None)
-	return window_id
+def find_spotify_uwp(hwnd, windows):
+        text = win32gui.GetWindowText(hwnd)
+        classname = win32gui.GetClassName(hwnd)
+        if classname == "Chrome_WidgetWin_0" and len(text) > 0:
+            windows.append(text)
+            
+
+def getwindow():
+    windows = []
+    win32gui.EnumWindows(find_spotify_uwp, windows)
+    if len(windows) == 0:
+        raise se.NoSpotifyError("No Spotify window found")
+    return windows	
 	
 def song_info():
-	try:
-		song_info = win32gui.GetWindowText(getwindow())
-	except:
-		pass
-	return song_info
+    try:
+        windows = getwindow()
+        artist, track = windows[0].split(" - ", 1)
+        return artist, track
+    except se.NoSpotifyError:
+        return "No Spotify window found", "None"
+        
+		
 
 def artist():
-	try:
-		temp = song_info()
-		artist, song = temp.split(" - ",1)
-		artist = artist.strip()
-		return artist
-	except:
-		return "There is noting playing at this moment"
+    artist, song = song_info()
+    artist = artist.strip()
+    return artist if artist != "No Spotify window found" else "Nothing is playing"
+    
+
+	
 	
 def song():
-	try:
-		temp = song_info()
-		artist, song = temp.split(" - ",1)
-		song = song.strip()
-		return song
-	except:
-		return "There is noting playing at this moment"
-	
-###SpotifyBlock###
-def createfolder(folder_path="C:\SpotiBlock"):
-	if not os.path.exists(folder_path):
-		os.makedirs(folder_path)
-	else:
-		pass
-	
-def createfile(file_path="C:\SpotiBlock\Block.txt" ):
-	if not os.path.exists(file_path):
-		file = open(file_path, "a")
-		file.write("ThisFirstLineWillBeIgnoredButIsNecessaryForUse")
+    artist, song = song_info()
+    song = song.strip()
+    return song if song != "None" else "Nothing is playing"
+    
 
-def blocklist(file_path="C:\SpotiBlock\Block.txt"):
-	block_list = []
-	for line in open(file_path, "r"):
-		if not line == "":
-			block_list.append(line.strip())
-	return block_list
-	
-def add_to_blocklist(file_path="C:\SpotiBlock\Block.txt"):
-	with open(file_path, 'a') as text_file:
-		text_file.write("\n" + song_info())
-		
-def reset_blocklist(file_path="C:\SpotiBlock\Block.txt"):
-	with open(file_path, 'w') as text_file:
-		text_file.write("ThisFirstLineWillBeIgnored")
-		pass
-	
-	
 
-	
 ###Media Controls###
-def hwcode(Media):
-	hwcode = win32api.MapVirtualKey(Media, 0)
+def hwcode(media):
+	hwcode = win32api.MapVirtualKey(media, 0)
 	return hwcode
 
 def next():
@@ -90,5 +70,4 @@ def play():
 	
 def mute():
 	win32api.keybd_event(Media_Mute, hwcode(Media_Mute))
-	
 	
