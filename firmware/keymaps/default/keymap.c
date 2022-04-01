@@ -1,4 +1,11 @@
 #include QMK_KEYBOARD_H
+#include "raw_hid.h"
+#include <split_scomm.h>
+#include "fruitbar.h"
+is_connected = false;
+
+
+
 
 enum {
   SPACE_FN_LAYER,
@@ -13,6 +20,7 @@ qk_tap_dance_action_t tap_dance_actions[] = {
 
 void raw_hid_receive(uint8_t *data, uint8_t length) {
     // Your code goes here. data is the packet received from host.
+    is_connected = true;
 }
 
 void encoder_update_user(unint8_t *index, bool clockwise) {
