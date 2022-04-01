@@ -18,7 +18,8 @@
 
 enum layers {
 	_BASE,
-	_FN
+	_FN,
+  _ARROWS
 };
 
 bool encoder_update_kb(uint8_t index, bool clockwise) {
@@ -40,8 +41,9 @@ void oled_task_user(void) {
   oled_write_P(PSTR("Layer: "), false);
 
   switch (get_highest_layer(layer_state)) {
+    case _ARROWS:
     case _BASE:
-      oled_write_P(PSTR("Default\n"), false);
+      oled_write_P(PSTR(""), false);
       break;
     case _FN:
       oled_write_P(PSTR("Function\n"), false);
