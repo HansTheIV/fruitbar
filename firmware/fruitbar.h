@@ -15,7 +15,6 @@
   */
  
 #pragma once
-
 #include "quantum.h"
 
 #define LAYOUT( K000, K001, K101, K002, K003, K004, K005, K105, K006, K106, K007, K008, K108,   K009,       K010, K110,\
@@ -30,5 +29,3 @@
               { K300, K301, K302, K303, K304, K305, K306, K307, K308, K309, K310 }, \
               { K400, K401, K402, K403, K404, K405, K406, K407, K408, K409, K410 }  \
 }
-
-bool is_connected;

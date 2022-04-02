@@ -42,8 +42,9 @@ void oled_task_user(void) {
 
   switch (get_highest_layer(layer_state)) {
     case _ARROWS:
+    	oled_write_P(PSTR("Arrows\n"))
     case _BASE:
-      oled_write_P(PSTR(""), false);
+      oled_write_P(PSTR("Base\n"), false);
       break;
     case _FN:
       oled_write_P(PSTR("Function\n"), false);
